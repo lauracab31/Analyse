@@ -13,7 +13,7 @@ from scipy.cluster.hierarchy import dendrogram
 
 
 path = './artificial/'
-name="xclara.arff"
+name="complex9.arff"
 
 #path_out = './fig/'
 databrut = arff.loadarff(open(path+str(name), 'r'))

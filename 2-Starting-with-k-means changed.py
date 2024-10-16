@@ -12,12 +12,14 @@ import time
 
 from scipy.io import arff
 from sklearn import cluster
+from sklearn.metrics import silhouette_score, silhouette_samples
+
 
 ##################################################################
 # Exemple :  k-Means Clustering
 
 path = './artificial/'
-name = "xclara.arff"
+name = "impossible.arff"
 
 databrut = arff.loadarff(open(path + str(name), 'r'))
 datanp = np.array([[x[0], x[1]] for x in databrut[0]])
@@ -39,48 +41,41 @@ print("------------------------------------------------------")
 print("Appel KMeans pour une valeur de k fixée")
 tps1 = time.time()
 
-# Création d'une boucle pour récupérer la valeur de l'inertie pour chaque clustering
+# Calcul de l'inertie et du score silhouette pour chaque nombre de clusters
 listeInertie = []
+listeSilhouette = []
 nbre_clusterMax = 20
-for i in range(1, nbre_clusterMax):
-    model = cluster.KMeans(n_clusters=i, init='k-means++', n_init=10)
+
+for i in range(2, nbre_clusterMax + 1):  # Commencer à 2 car silhouette_score nécessite au moins 2 clusters
+    model = cluster.KMeans(n_clusters=i, init='k-means++', n_init=10, random_state=0)
     model.fit(datanp)
+    
+    # Calcul de l'inertie
     inertie = model.inertia_
     listeInertie.append(inertie)
+    
+    # Calcul du score silhouette
+    silhouette_avg = silhouette_score(datanp, model.labels_)
+    listeSilhouette.append(silhouette_avg)
 
-# Affichage de l'inertie en fonction du nombre de clusters
+# Affichage du score silhouette en fonction du nombre de clusters
 plt.figure(figsize=(10, 6))
-plt.plot(range(1, nbre_clusterMax), listeInertie, marker='o')
-plt.title("Inertie en fonction du nombre de clusters")
+plt.plot(range(2, nbre_clusterMax + 1), listeSilhouette, marker='o', color='blue')
+plt.title("Score de silhouette en fonction du nombre de clusters")
 plt.xlabel("Nombre de clusters")
-plt.ylabel("Inertie")
-plt.xticks(range(1, nbre_clusterMax))
+plt.ylabel("Score de silhouette moyen")
+plt.xticks(range(2, nbre_clusterMax + 1))
 plt.grid()
 plt.show()
 
-# Calcul des dérivées
-#d_1 = np.diff(listeInertie)  # Dérivée première
-#d_2 = np.diff(d_1)  # Dérivée seconde
-
-# Identification du "point d'inflexion" de la courbe
-#nombre_clusters_ideal = nombre_clusters_ideal = 
-
-
-#print(f"Le nombre de clusters idéal (point d'inflexion) est : {nombre_clusters_ideal}")
-
-
-tps2 = time.time()
-labels = model.labels_
-# informations sur le clustering obtenu
-iteration = model.n_iter_
-inertie = model.inertia_
-centroids = model.cluster_centers_
-
-plt.figure(figsize=(6, 6))
-plt.scatter(f0, f1, c=labels, s=8)
-plt.scatter(centroids[:, 0],centroids[:, 1], marker="x", s=50, linewidths=3, color="red")
-#plt.title("Données après clustering : "+ str(name) + " - Nb clusters ="+ str(k))
-plt.savefig(path_out+"Plot-kmeans-code1-"+str(name)+"-cluster.jpg",bbox_inches='tight', pad_inches=0.1)
+# Affichage de l'inertie en fonction du nombre de clusters (optionnel)
+plt.figure(figsize=(10, 6))
+plt.plot(range(2, nbre_clusterMax + 1), listeInertie, marker='o', color='green')
+plt.title("Inertie en fonction du nombre de clusters")
+plt.xlabel("Nombre de clusters")
+plt.ylabel("Inertie")
+plt.xticks(range(2, nbre_clusterMax + 1))
+plt.grid()
 plt.show()
 
 #print("nb clusters =",nbre_clusterMax,", nb iter =",iteration, ", inertie = ",inertie, ", runtime = ", round((tps2 - tps1)*1000,2),"ms")
@@ -89,4 +84,3 @@ plt.show()
 #from sklearn.metrics.pairwise import euclidean_distances
 #dists = euclidean_distances(centroids)
 #print(dists)
-

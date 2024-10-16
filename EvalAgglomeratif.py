@@ -5,6 +5,7 @@ import time
 from scipy.io import arff
 from sklearn import cluster
 from sklearn import metrics
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 
 
 ###################################################################
@@ -12,7 +13,7 @@ from sklearn import metrics
 
 
 path = './artificial/'
-name="xor.arff"
+name="complex9.arff"
 
 #path_out = './fig/'
 databrut = arff.loadarff(open(path+str(name), 'r'))
@@ -40,7 +41,7 @@ plt.show()
 ### FIXER la distance
 # 
 tps1 = time.time()
-seuil_dist=55
+seuil_dist=200
 model = cluster.AgglomerativeClustering(distance_threshold=seuil_dist, linkage='average', n_clusters=None)
 model = model.fit(datanp)
 tps2 = time.time()
@@ -76,6 +77,56 @@ plt.title("Clustering agglomératif (average, n_cluster= "+str(k)+") "+str(name)
 plt.show()
 print("nb clusters =",kres,", nb feuilles = ", leaves, " runtime = ", round((tps2 - tps1)*1000,2),"ms")
 
+# Calcul du coefficient silhouette, de l'indice de Davies Bouldin (DB) pour chaque nombre de clusters
+listeSilhouette = []
+listeDB=[]
+listeCalin=[]
+nbre_clusterMax = 20
 
+for i in range(2, nbre_clusterMax + 1):  # Commencer à 2 car silhouette_score nécessite au moins 2 clusters
+    model = cluster.AgglomerativeClustering(linkage='average', n_clusters=i)
+    model.fit(datanp)
+
+    # Calcul du score silhouette
+    silhouette_avg = silhouette_score(datanp, model.labels_)
+    listeSilhouette.append(silhouette_avg)
+
+    #calcul de l'indice de DB
+    db_score=davies_bouldin_score(datanp, model.labels_)
+    listeDB.append(db_score)
+
+    #calcul de l'indice de Calinski
+    db_score=calinski_harabasz_score(datanp, model.labels_)
+    listeCalin.append(db_score)
+
+# Affichage du score silhouette en fonction du nombre de clusters
+plt.figure(figsize=(10, 6))
+plt.plot(range(2, nbre_clusterMax + 1), listeSilhouette, marker='o', color='blue')
+plt.title("Score de silhouette en fonction du nombre de clusters")
+plt.xlabel("Nombre de clusters")
+plt.ylabel("Score de silhouette moyen")
+plt.xticks(range(2, nbre_clusterMax + 1))
+plt.grid()
+plt.show()
+
+# Affichage de l'indice de DB en fonction du nombre de clusters 
+plt.figure(figsize=(10, 6))
+plt.plot(range(2, nbre_clusterMax+1), listeDB, marker='o', color='green')
+plt.title("Coefficient de DB en fonction du nombre de clusters")
+plt.xlabel("Nombre de clusters")
+plt.ylabel("Coefficient de DB")
+plt.xticks(range(2, nbre_clusterMax+1))
+plt.grid()
+plt.show()
+
+# Affichage de l'indice de Calinski en fonction du nombre de clusters 
+plt.figure(figsize=(10, 6))
+plt.plot(range(2, nbre_clusterMax+1), listeCalin, marker='o', color='green')
+plt.title("Coefficient de Calinski-Harabasz en fonction du nombre de clusters")
+plt.xlabel("Nombre de clusters")
+plt.ylabel("Coefficient de Calinski-Harabasz")
+plt.xticks(range(2, nbre_clusterMax+1))
+plt.grid()
+plt.show()
 
 #######################################################################
