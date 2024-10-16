@@ -17,7 +17,7 @@ from sklearn import cluster
 # Exemple :  k-Means Clustering
 
 path = './artificial/'
-name = "birch-rg2.arff"
+name = "xclara.arff"
 
 databrut = arff.loadarff(open(path + str(name), 'r'))
 datanp = np.array([[x[0], x[1]] for x in databrut[0]])
