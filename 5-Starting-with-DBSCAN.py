@@ -13,7 +13,7 @@ from sklearn import preprocessing
 
 
 path = './artificial/'
-name="xclara.arff"
+name="donut1.arff"
 
 #path_out = './fig/'
 databrut = arff.loadarff(open(path+str(name), 'r'))
@@ -42,8 +42,8 @@ plt.show()
 print("------------------------------------------------------")
 print("Appel DBSCAN (1) ... ")
 tps1 = time.time()
-epsilon=2 #2  # 4
-min_pts= 5 #10   # 10
+epsilon=5 #2  # 4
+min_pts= 7 #10   # 10
 model = cluster.DBSCAN(eps=epsilon, min_samples=min_pts)
 model.fit(datanp)
 tps2 = time.time()
@@ -78,8 +78,8 @@ plt.show()
 print("------------------------------------------------------")
 print("Appel DBSCAN (2) sur données standardisees ... ")
 tps1 = time.time()
-epsilon=0.05 #0.05
-min_pts=5 # 10
+epsilon=0.005 #0.05
+min_pts=6 # 10
 model = cluster.DBSCAN(eps=epsilon, min_samples=min_pts)
 model.fit(data_scaled)
 

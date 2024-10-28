@@ -12,7 +12,7 @@ from sklearn import metrics
 
 
 path = './artificial/'
-name="xor.arff"
+name="2d-4c-no4.arff"
 
 #path_out = './fig/'
 databrut = arff.loadarff(open(path+str(name), 'r'))
@@ -40,7 +40,7 @@ plt.show()
 ### FIXER la distance
 # 
 tps1 = time.time()
-seuil_dist=55
+seuil_dist=6
 model = cluster.AgglomerativeClustering(distance_threshold=seuil_dist, linkage='average', n_clusters=None)
 model = model.fit(datanp)
 tps2 = time.time()
@@ -58,7 +58,7 @@ print("nb clusters =",k,", nb feuilles = ", leaves, " runtime = ", round((tps2 -
 ###
 # FIXER le nombre de clusters
 ###
-k=4
+k=5
 tps1 = time.time()
 model = cluster.AgglomerativeClustering(linkage='average', n_clusters=k)
 model = model.fit(datanp)
